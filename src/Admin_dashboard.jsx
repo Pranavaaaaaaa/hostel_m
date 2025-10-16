@@ -185,66 +185,55 @@ const AddRoomsModal = ({ onClose, onAddSuccess }) => {
 
 
     return (
-        <div style={styles.modalBackdrop}>
-            <div style={styles.modalContent}>
-                <h2>Add New Rooms</h2>
-                {/*Current Time*/}
-                <p style = {{textAlign: 'center', fontsize: '14px', color: '#555'}}>
-                  Creation Time: <strong>{creationTime}</strong>
-                </p>
-                <form onSubmit={handleSubmit}>
-                    <div style={styles.formGroup}>
-                        <label htmlFor="numRooms">Number of Rooms to Add (Max 5):</label>
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50 p-4">
+            <div className="bg-gray-800 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+                {/* Modal Header */}
+                <div className="flex justify-between items-center p-6 border-b border-gray-700">
+                    <div>
+                        <h2 className="text-xl font-bold text-white">Add New Rooms</h2>
+                        <p className="text-sm text-gray-400">Creation Time: {creationTime}</p>
+                    </div>
+                    <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+
+                {/* Modal Body */}
+                <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6">
+                    <div className="mb-6">
+                        <label htmlFor="numRooms" className="block text-sm font-medium text-gray-300 mb-2">Number of Rooms to Add (Max 5)</label>
                         <select
                             id="numRooms"
                             value={numRooms}
                             onChange={(e) => setNumRooms(Number(e.target.value))}
-                            style={{ marginLeft: '10px' }}
+                            className="w-full bg-gray-700 text-white p-2 rounded-md border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         >
                             {[1, 2, 3, 4, 5].map(n => <option key={n} value={n}>{n}</option>)}
                         </select>
                     </div>
 
-                    <hr style={{ margin: '20px 0' }} />
-
-                    {rooms.map((room, index) => (
-                        <div key={index} style={styles.roomFormWrapper}>
-                            <h4>Room {index + 1}</h4>
-                            <div style={styles.roomForm}>
-                              <input
-                                  type="number"
-                                  placeholder="Room ID (e.g., 101)"
-                                  value={room.id}
-                                  onChange={(e) => handleInputChange(index, 'id', e.target.value)}
-                                  required
-                              />
-                              <input
-                                  type="number"
-                                  placeholder="Hostel ID (e.g., 1)"
-                                  value={room.hostel_id}
-                                  onChange={(e) => handleInputChange(index, 'hostel_id', e.target.value)}
-                                  required
-                              />
-                              <input
-                                  type="number"
-                                  placeholder="Capacity (e.g., 2)"
-                                  value={room.capacity}
-                                  onChange={(e) => handleInputChange(index, 'capacity', e.target.value)}
-                                  required
-                              />
+                    <div className="space-y-6">
+                        {rooms.map((room, index) => (
+                            <div key={index} className="bg-gray-900 p-4 rounded-lg border border-gray-700">
+                                <h4 className="font-semibold text-white mb-3">Room {index + 1}</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <input type="number" placeholder="Room ID (e.g., 101)" value={room.id} onChange={(e) => handleInputChange(index, 'id', e.target.value)} required className="bg-gray-700 text-white p-2 rounded-md border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                                    <input type="number" placeholder="Hostel ID (1-5)" value={room.hostel_id} onChange={(e) => handleInputChange(index, 'hostel_id', e.target.value)} required className="bg-gray-700 text-white p-2 rounded-md border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                                    <input type="number" placeholder="Capacity (1-3)" value={room.capacity} onChange={(e) => handleInputChange(index, 'capacity', e.target.value)} required className="bg-gray-700 text-white p-2 rounded-md border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                                </div>
+                                {room.error && <p className="text-red-400 text-xs mt-2 text-center">{room.error}</p>}
                             </div>
-                            {/* Conditionally render the error message for this specific room */}
-                            {room.error && <p style={styles.errorMessage}>{room.error}</p>}
-                        </div>
-                    ))}
-                    
-                    <div style={styles.modalActions}>
-                        <button type="button" onClick={onClose} disabled={submitting}>Cancel</button>
-                        <button type="submit" disabled={submitting}>
-                            {submitting ? 'Adding...' : 'Add Rooms'}
-                        </button>
+                        ))}
                     </div>
                 </form>
+
+                {/* Modal Footer */}
+                <div className="flex justify-end items-center p-6 border-t border-gray-700 gap-4">
+                    <button type="button" onClick={onClose} disabled={submitting} className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors">Cancel</button>
+                    <button type="submit" onClick={handleSubmit} disabled={submitting} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 disabled:bg-blue-400 disabled:cursor-not-allowed transition-colors">
+                        {submitting ? 'Adding...' : `Add ${numRooms} Room(s)`}
+                    </button>
+                </div>
             </div>
         </div>
     );
@@ -480,6 +469,25 @@ function ADashboard({ onLogout }) {
     };
   }, []);
 
+  const COLUMN_MAP = {
+    id: 'ID',
+    name: 'Name',
+    USN: 'USN',
+    email: 'Email',
+    room_no: 'Room No',
+    fee_id: 'Fee ID',
+    hostel_id: 'Hostel ID',
+    capacity: 'Capacity',
+    current_occupancy: 'Occupancy',
+    created_at: 'Date Created',
+    student_id: 'Student ID',
+    category: 'Category',
+    description: 'Description',
+    status: 'Status',
+    amount_paid: 'Amount Paid',
+    Actions: 'Actions', // For our custom actions column
+};
+
   const renderTable = () => {
     const tableData = data[activeTab] || [];
     let displayData = [...tableData];
@@ -514,6 +522,22 @@ function ADashboard({ onLogout }) {
           <p style={{color: 'white', textAlign: 'center'}}>No data available for this view.</p>
         </div>
       );
+    }
+
+    let columnOrder = [];
+    if (activeTab === 'students') {
+      columnOrder = ['name', 'USN', 'email', 'room_no', 'fee_id', 'created_at'];
+    } else if (activeTab === 'rooms') {
+      columnOrder = ['id', 'hostel_id', 'capacity', 'current_occupancy', 'created_at'];
+    } else if (activeTab === 'complaints') {
+      // We will now get the student name and room from the nested object
+      columnOrder = ['id', 'students.name', 'students.room_no', 'category', 'status', 'description', 'created_at'];
+    } else if (activeTab === 'payments') {
+      columnOrder = ['id', 'student_id', 'amount_paid', 'status', 'created_at'];
+    }
+
+    if (activeTab === 'students' || activeTab === 'rooms') {
+      columnOrder.push('Actions');
     }
 
     if (highlightedRow.tab === activeTab && highlightedRow.id !== null) {
@@ -630,7 +654,7 @@ function ADashboard({ onLogout }) {
       </>  
     );
   };
-
+  
   const renderCellContent = (headerKey, value, row) => {
     const foreignKeyMap = {complaint_id: 'complaints', fee_id: 'payments', room_no: 'rooms',};
 
@@ -648,8 +672,25 @@ function ADashboard({ onLogout }) {
 
   if (loading) return <div>Loading dashboard...</div>;
 
+  const totalStudents = data.students.length;
+  const totalRooms = data.rooms.length;
+  const occupiedRooms = data.rooms.filter(r => r.current_occupancy > 0).length;
+  const pendingComplaints = data.complaints.filter(c => c.status !== 'Resolved').length;
+
+  const StatsCard = ({ title, value, icon }) => (
+    <div className="bg-gray-900 rounded-xl p-6 flex items-center space-x-4">
+      <div className="bg-gray-800 p-3 rounded-lg">{icon}</div>
+      <div>
+        <p className="text-sm text-gray-400 font-medium">{title}</p>
+        <p className="text-2xl font-bold text-white">{value}</p>
+      </div>
+    </div>
+  );
+
   return (
-    <div style={styles.dashboard}>
+    // <div style={styles.dashboard}>
+    <div className="flex h-screen bg-gray-800 font-sans">
+
 
       {studentForReport && (
           <ConfirmationModal
@@ -690,6 +731,31 @@ function ADashboard({ onLogout }) {
         />
       )}
 
+      <nav className="w-64 bg-gray-900 text-white flex flex-col">
+        <div className="p-6 flex items-center gap-4 border-b border-gray-700">
+            {/* You can add your SJBIT logo here later if you wish */}
+            <h1 className="text-xl font-bold">Admin Dashboard</h1>
+        </div>
+        <div className="flex-1 p-4 space-y-2">
+            {['students', 'rooms', 'complaints', 'payments'].map(tab => (
+                <button key={tab} onClick={() => setActiveTab(tab)} className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg text-left text-sm font-medium transition-colors ${activeTab === tab ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700 hover:text-white'}`}>
+                    {/* SVG Icons */}
+                    {tab === 'students' && <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>}
+                    {tab === 'rooms' && <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 21h20"/><path d="M5 21V7l7-4 7 4v14"/><path d="M15 7v4h-4V7h4z"/></svg>}
+                    {tab === 'complaints' && <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>}
+                    {tab === 'payments' && <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>}
+                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                </button>
+            ))}
+        </div>
+        <div className="p-4 border-t border-gray-700">
+            <button onClick={() => setShowLogoutConfirm(true)} className="w-full flex items-center gap-3 px-4 py-2 rounded-lg text-left text-sm font-medium text-gray-400 hover:bg-red-600/20 hover:text-red-400 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+                Logout
+            </button>
+        </div>
+      </nav>
+
       <style>{`
         @keyframes fadeHighlight {
           from { background-color: #ff4d4d; } /* Start bright red */
@@ -700,11 +766,35 @@ function ADashboard({ onLogout }) {
         }
       `}</style>
 
-      {showAddRoomsModal && <AddRoomsModal onClose={() => setShowAddRoomsModal(false)} onAddSuccess={fetchData} />}
-      <header style={styles.header}><h2>Admin Dashboard</h2>
-      <button onClick={() => setShowLogoutConfirm(true)}>Logout</button></header>
-      <nav style={styles.nav}>
-          {['students', 'rooms', 'complaints', 'payments'].map(tab => (
+        <main className="flex-1 overflow-y-auto p-8">
+        <h1 className="text-3xl font-bold text-white mb-8">{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Overview</h1>
+
+        {/* --- STATS CARDS --- */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <StatsCard title="Total Students" value={totalStudents} icon={<svg className="h-6 w-6 text-blue-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>} />
+            <StatsCard title="Rooms Occupied" value={`${occupiedRooms} / ${totalRooms}`} icon={<svg className="h-6 w-6 text-green-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 21h20"/><path d="M5 21V7l7-4 7 4v14"/></svg>} />
+            <StatsCard title="Pending Complaints" value={pendingComplaints} icon={<svg className="h-6 w-6 text-yellow-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/></svg>} />
+            <StatsCard title="Total Payments" value={data.payments.length} icon={<svg className="h-6 w-6 text-pink-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>} />
+        </div>
+
+        {/* --- MAIN TABLE SECTION --- */}
+        <div className="bg-gray-900 shadow-lg rounded-xl">
+             <div className="p-6 flex justify-between items-center">
+                <div>
+                    <label htmlFor="rowsPerPage" className="text-gray-400 mr-2">View</label>
+                    <select id="rowsPerPage" value={rowsPerPage} onChange={e => setRowsPerPage(Number(e.target.value))} className="bg-gray-700 text-white rounded-md border-gray-600 focus:ring-blue-500 focus:border-blue-500">
+                        <option value={25}>25</option><option value={50}>50</option><option value={75}>75</option><option value={100}>100</option>
+                    </select>
+                </div>
+                 {activeTab === 'rooms' && (<button onClick={() => setShowAddRoomsModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-sm">+ Add Rooms</button>)}
+            </div>
+            {activeTab === 'rooms' && <div className="px-6 pb-4"><CsvUploader onUploadSuccess={fetchData} /></div>}
+            {renderTable()}
+        </div>
+      </main>
+      
+      {/* <nav style={styles.nav}> */}
+          {/* {['students', 'rooms', 'complaints', 'payments'].map(tab => (
             // --- FIX #1: The onClick handler now resets the highlight state ---
             <button
               key={tab}
@@ -717,16 +807,16 @@ function ADashboard({ onLogout }) {
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
             </button>
-          ))}
-      </nav>
-      <main style={styles.main}>
+          ))} */}
+      {/* </nav> */}
+      {/* <main style={styles.main}>
           <div style={styles.controls}>
               <div><label htmlFor="rowsPerPage">View </label><select id="rowsPerPage" value={rowsPerPage} onChange={e => setRowsPerPage(Number(e.target.value))}><option value={25}>25</option><option value={50}>50</option><option value={75}>75</option><option value={100}>100</option></select><span> entries</span></div>
               {activeTab === 'rooms' && (<button onClick={() => setShowAddRoomsModal(true)} style={{ marginLeft: '20px' }}>+ Add Rooms Manually</button>)}
           </div>
           {activeTab === 'rooms' && <CsvUploader onUploadSuccess={fetchData} />}
           {renderTable()}
-      </main>
+      </main> */}
     </div>
   );
 }

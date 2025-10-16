@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-// No longer needs supabase client directly
+import React, {useState } from 'react';
 
 export default function SignUpPage({ onBackToLogin, onProceedToPayment }) {
   const [name, setName] = useState('');
@@ -7,43 +6,90 @@ export default function SignUpPage({ onBackToLogin, onProceedToPayment }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [roomCapacity, setRoomCapacity] = useState(2);
-  const [loading, setLoading] = useState(false); // We still use this for user feedback
+  const [loading, setLoading] = useState(false);
 
-  async function handleFormSubmit(e) {
+  const handleFormSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-
-    // Package all the user's data into a single object
-    const userData = {
-      name,
-      usn,
-      email,
-      password,
-      chosen_capacity: roomCapacity,
-    };
-
+    const userData = { name, usn, email, password, chosen_capacity: roomCapacity };
     onProceedToPayment(userData);
-    
-    // The component will be unmounted, so no need to setLoading(false)
-  }
+  };
+
+  // Helper to determine the slider's position based on the selected capacity
+  const sliderPositionClass = () => {
+    if (roomCapacity === 1) return 'translate-x-0';
+    if (roomCapacity === 2) return 'translate-x-full'; // translate-x-full is 100%
+    if (roomCapacity === 3) return 'translate-x-[200%]'; // translate-x-[200%] is 200%
+    return 'translate-x-full'; // Default case
+  };
 
   return (
-    <div style={{ padding: 20, maxWidth: 400, margin: 'auto' }}>
-      <h2>New Student Registration</h2>
-      <form onSubmit={handleFormSubmit}>
-        {/* All your input fields remain the same */}
-        <div style={{ marginBottom: 15 }}><label>Full Name</label><input type="text" value={name} onChange={(e) => setName(e.target.value)} required style={{ width: '100%', padding: 8, marginTop: 5 }}/></div>
-        <div style={{ marginBottom: 15 }}><label>USN</label><input type="text" value={usn} onChange={(e) => setUsn(e.target.value)} required style={{ width: '100%', padding: 8, marginTop: 5 }}/></div>
-        <div style={{ marginBottom: 15 }}><label>Email</label><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required style={{ width: '100%', padding: 8, marginTop: 5 }}/></div>
-        <div style={{ marginBottom: 15 }}><label>Password</label><input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required style={{ width: '100%', padding: 8, marginTop: 5 }}/></div>
-        <div style={{ marginBottom: 15 }}><label>Select Room Capacity</label><div style={{ display: 'flex', justifyContent: 'space-around', marginTop: '5px' }}>{[1, 2, 3].map(cap => (<label key={cap} style={{ cursor: 'pointer' }}><input type="radio" name="capacity" value={cap} checked={roomCapacity === cap} onChange={() => setRoomCapacity(cap)} />{` ${cap}-Seater`}</label>))}</div></div>
+    <div className="min-h-screen bg-cover bg-center font-sans" style={{backgroundImage: "url('https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=2070&auto=format&fit=crop')"}}>
+      <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-black bg-opacity-50">
         
-        <button type="submit" disabled={loading} style={{ padding: '10px 20px', width: '100%' }}>
-          {loading ? 'Processing...' : 'Proceed to Payment'}
-        </button>
-      </form>
-      <hr style={{ margin: '20px 0' }} />
-      <button onClick={onBackToLogin}>Already have an account? Login</button>
+        <div className="relative z-10 w-full max-w-md p-8 bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl border border-white/30">
+          <div className="text-center">
+            <h2 className="text-4xl font-bold text-white tracking-tight">Create an Account</h2>
+            <p className="mt-2 text-gray-300">Join The Hostel Hub community.</p>
+          </div>
+          <br></br>
+          <form className="space-y-5" onSubmit={handleFormSubmit}>
+            {/* ... (Name, USN, Email, Password inputs remain the same) ... */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-300">Full Name</label>
+                <input id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} required className="w-full mt-1 px-3 py-2 bg-white/10 border border-white/30 text-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-300"/>
+              </div>
+              <div>
+                <label htmlFor="usn" className="block text-sm font-medium text-gray-300">USN</label>
+                <input id="usn" type="text" value={usn} onChange={(e) => setUsn(e.target.value)} required className="w-full mt-1 px-3 py-2 bg-white/10 border border-white/30 text-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-300"/>
+              </div>
+            </div>
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-300">Email Address</label>
+              <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full mt-1 px-3 py-2 bg-white/10 border border-white/30 text-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-300"/>
+            </div>
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-300">Password</label>
+              <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full mt-1 px-3 py-2 bg-white/10 border border-white/30 text-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-300"/>
+            </div>
+
+            {/* --- THIS IS THE NEW, ANIMATED SLIDER COMPONENT --- */}
+            <fieldset className="pt-2">
+                <legend className="block text-sm font-medium text-gray-300 mb-2">Select Room Capacity</legend>
+                <div className="relative flex w-full bg-gray-800/50 p-1 rounded-lg">
+                    {/* The sliding blue background */}
+                    <div 
+                        className={`absolute top-1 left-1 h-[calc(100%-0.5rem)] w-[calc((100%-0.5rem)/3)] bg-blue-600 rounded-md transition-transform duration-10 ease-in-out ${sliderPositionClass()}`}
+                    />
+                    
+                    {/* The three clickable label options */}
+                    {[1, 2, 3].map(cap => (
+                    <label key={cap} className="relative z-10 flex-1 text-center cursor-pointer p-2 rounded-md">
+                        <input type="radio" name="capacity" value={cap} checked={roomCapacity === cap} onChange={() => setRoomCapacity(cap)} className="sr-only"/>
+                        <span className={`text-sm font-semibold transition-colors duration-100 ${roomCapacity === cap ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
+                            {cap} Occupancy
+                        </span>
+                    </label>
+                    ))}
+                </div>
+            </fieldset>
+            
+            <div>
+              <button type="submit" disabled={loading} className="w-full mt-4 flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400 disabled:cursor-not-allowed transition">
+                {loading ? 'Processing...' : 'Proceed to Payment'}
+              </button>
+            </div>
+          </form>
+
+          <p className="mt-6 text-center text-sm text-gray-400">
+            Already have an account?{' '}
+            <button onClick={onBackToLogin} className="font-medium text-blue-400 hover:text-blue-300 focus:outline-none">
+              Sign In
+            </button>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
