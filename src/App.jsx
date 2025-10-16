@@ -1,7 +1,7 @@
 // App.jsx
 
 import React, { useEffect, useState } from "react";
-import { supabase } from "./supabaseClient";
+import { supabase } from "./supabaseclient";
 import AuthPage from "./AuthPage";
 import Dashboard from "./Student_dashboard";
 import WDashboard from "./Warden_dashboard";

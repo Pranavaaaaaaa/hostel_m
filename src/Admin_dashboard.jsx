@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { supabase } from './supabaseClient';
+import { supabase } from './supabaseclient';
 
 // Helper function to format dates as dd-mm-yyyy hh:mm
 const formatDateForDisplay = (date = new Date()) => {

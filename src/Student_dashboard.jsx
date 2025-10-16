@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { supabase } from './supabaseClient';
+import { supabase } from './supabaseclient';
 
 const ConfirmationModal = ({ title, message, onConfirm, onCancel, isProcessing, confirmText, processingText }) => (
     <div style={styles.modalBackdrop}>

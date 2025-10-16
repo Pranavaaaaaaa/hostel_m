@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { supabase } from './supabaseClient';
+import { supabase } from './supabaseclient';
 
 export default function PaymentPage({ pendingUserData, onPaymentSuccess, onPaymentFailure }) {
   const [paying, setPaying] = useState(false);
