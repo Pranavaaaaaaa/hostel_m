@@ -229,7 +229,7 @@ return (
 
               {/* --- SIGN UP FORM --- */}
               <div className={`absolute inset-0 p-8 flex flex-col justify-center transition-all duration-200 ease-in-out ${view === 'signup' ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}>
-                 <div className="flex justify-center items-center gap-6 mb-6">
+                 <div className="flex justify-center items-center gap-6 mb-4">
                     <img src="https://sjbit.edu.in/wp-content/uploads/2021/06/sjbit-new-logo.png" alt="SJBIT Logo" className="h-16 w-16"/>
                     <div>
                         <h2 className="text-3xl font-bold text-white tracking-tight">Create Account</h2>
