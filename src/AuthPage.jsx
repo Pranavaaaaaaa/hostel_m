@@ -177,20 +177,6 @@ export default function AuthPage({ onLogin, onProceedToPayment }) {
     return 'translate-x-[50%]';
   };
 
-  // This function checks if the 'Enter' key was pressed
-  const handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      if (view === 'login') handleLogin(event);
-      else handleSignUp(event);
-    }
-  };
-
-  //   if (showSignUp) {
-  //   // Pass the new prop down to SignUpPage
-  //   return <SignUpPage onBackToLogin={() => setShowSignUp(false)} onProceedToPayment={onProceedToPayment} />;
-  // }
-
 return (
     <div className="min-h-screen font-sans">
       <ParticleBackground />
@@ -212,11 +198,11 @@ return (
                 <form className="space-y-6" onSubmit={handleLogin}>
                     {/* ... Login email and password inputs ... */}
                     <div className="relative">
-                        <input id="email" type="email" placeholder=" " required value={email} onChange={(e) => setEmail(e.target.value) } onKeyDown={handleKeyPress} className="w-full mt-1 px-3 py-2 bg-white/10 border border-white/30 text-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-300"/>
+                        <input id="email" type="email" placeholder=" " required value={email} onChange={(e) => setEmail(e.target.value) } className="w-full mt-1 px-3 py-2 bg-white/10 border border-white/30 text-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-300"/>
                         <label htmlFor="email" className="absolute left-0 -top-5 text-sm text-gray-400 ...">Email address</label>
                     </div>
                      <div className="relative">
-                        <input id="password" type="password" placeholder=" " required value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={handleKeyPress} className="w-full mt-1 px-3 py-2 bg-white/10 border border-white/30 text-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-300"/>
+                        <input id="password" type="password" placeholder=" " required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full mt-1 px-3 py-2 bg-white/10 border border-white/30 text-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-300"/>
                         <label htmlFor="password" className="absolute left-0 -top-5 text-sm text-gray-400 ...">Password</label>
                     </div>
                     {errorLogin && <p className="text-sm text-red-400 text-center">{errorLogin}</p>}
@@ -241,11 +227,11 @@ return (
                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                      <div className="relative">
                         <label htmlFor="name" className="block text-sm font-medium text-gray-300">Full Name</label>
-                        <input id="name" type="text" placeholder=" " value={name} onChange={(e) => setName(e.target.value)} required onKeyDown={handleKeyPress} className="w-full mt-1 px-3 py-2 bg-white/10 border border-white/30 text-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-300"/> 
+                        <input id="name" type="text" placeholder=" " value={name} onChange={(e) => setName(e.target.value)} required className="w-full mt-1 px-3 py-2 bg-white/10 border border-white/30 text-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-300"/> 
                       </div>
                       <div className="relative">
                         <label htmlFor="usn" className="block text-sm font-medium text-gray-300">USN</label>
-                        <input id="usn" type="text" placeholder=" " value={usn} onChange={(e) => setUsn(e.target.value)} required onKeyDown={handleKeyPress} className="w-full mt-1 px-3 py-2 bg-white/10 border border-white/30 text-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-300"/>
+                        <input id="usn" type="text" placeholder=" " value={usn} onChange={(e) => setUsn(e.target.value)} required className="w-full mt-1 px-3 py-2 bg-white/10 border border-white/30 text-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-300"/>
                       </div>
                    </div>
                     <div className="relative pt-2">
