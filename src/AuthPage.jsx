@@ -112,7 +112,8 @@ export default function AuthPage({ onLogin, onProceedToPayment }) {
   const [roomCapacity, setRoomCapacity] = useState(2);
   const [loadingSignUp, setLoadingSignUp] = useState(false);
 
-  async function handleLogin() {
+  const handleLogin = async (e) => {
+    e.preventDefault();
     setLoadingLogin(true);
     setErrorLogin('');
     // Prevent login if fields are empty
