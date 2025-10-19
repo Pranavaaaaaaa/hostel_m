@@ -81,15 +81,41 @@ const CsvUploader = ({ onUploadSuccess }) => {
   };
 
   return (
-    <div style={styles.csvUploader}>
-      <h3>Import Rooms from CSV</h3>
-      <p>Ensure CSV headers match the table columns: `created at` is optional and will default to now.</p>
-      <input type="file" accept=".csv" onChange={handleFileChange} disabled={uploading} />
-      <button onClick={handleUpload} disabled={uploading || !parsedData}>
-        {uploading ? 'Uploading...' : 'Upload CSV'}
-      </button>
-      {fileName && <p style={{ marginTop: '10px', fontStyle: 'italic' }}>Selected file: {fileName}</p>}
-      {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
+    <div className="bg-gray-900 border border-gray-700 rounded-xl p-6">
+      <h3 className="text-lg font-semibold text-white">Import Rooms from CSV</h3>
+      <p className="text-sm text-gray-400 mt-1">Quickly populate your rooms table by uploading a CSV file.</p>
+      
+      <div className="mt-4">
+        {/* If no file is selected, show the drop zone */}
+        {!fileName ? (
+          <label htmlFor="csv-upload" className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-600 rounded-lg cursor-pointer hover:bg-gray-800 transition-colors">
+            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+              <svg className="w-10 h-10 mb-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-4-4V7a4 4 0 014-4h.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293H12a4 4 0 014 4v1m-4 4h-2m2 4h4a4 4 0 004-4v-1m-4-4H7a4 4 0 00-4 4v1a4 4 0 004 4h2"></path></svg>
+              <p className="mb-2 text-sm text-gray-400"><span className="font-semibold text-blue-400">Click to upload</span> or drag and drop</p>
+              <p className="text-xs text-gray-500">CSV format only</p>
+            </div>
+            <input id="csv-upload" type="file" className="hidden" accept=".csv" onChange={handleFileChange} disabled={uploading} />
+          </label>
+        ) : (
+          // If a file IS selected, show its name and the upload button
+          <div className="bg-gray-800 p-4 rounded-lg flex items-center justify-between">
+            <div className="flex items-center gap-3">
+               <svg className="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+              <span className="text-sm font-medium text-white">{fileName}</span>
+            </div>
+            <button onClick={handleUpload} disabled={uploading || !parsedData} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+              {uploading ? 'Uploading...' : 'Upload CSV'}
+            </button>
+          </div>
+        )}
+
+        {error && (
+            <div className="mt-3 flex items-center gap-2 text-sm text-red-400">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
+                {error}
+            </div>
+        )}
+      </div>
     </div>
   );
 };
@@ -239,26 +265,20 @@ const AddRoomsModal = ({ onClose, onAddSuccess }) => {
     );
 };
 
-const ConfirmationModal = ({ title, message, onConfirm, onCancel, isProcessing, confirmText, processingText, confirmButtonColor }) => {
-    return (
-        <div style={styles.modalBackdrop}>
-            <div style={styles.modalContent}>
-                <h3 style={{ marginTop: 0 }}>{title || 'Confirmation'}</h3>
-                <p>{message}</p>
-                <div style={styles.modalActions}>
-                    <button onClick={onCancel} disabled={isProcessing} style={styles.cancelButton}>Cancel</button>
-                    <button 
-                        onClick={onConfirm} 
-                        disabled={isProcessing} 
-                        style={{...styles.confirmButton, backgroundColor: confirmButtonColor || '#dc3545' }}
-                    >
-                        {isProcessing ? (processingText || 'Processing...') : (confirmText || 'Confirm')}
-                    </button>
-                </div>
+const ConfirmationModal = ({ title, message, onConfirm, onCancel, isProcessing, confirmText, processingText, confirmButtonColor }) => (
+    <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50 p-4">
+        <div className="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-sm text-center border border-gray-700">
+            <h3 className="text-lg font-semibold text-white">{title || 'Confirmation'}</h3>
+            <p className="mt-2 text-sm text-gray-400">{message}</p>
+            <div className="mt-6 flex justify-center gap-4">
+                <button onClick={onCancel} disabled={isProcessing} className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-500 font-medium transition-colors">Cancel</button>
+                <button onClick={onConfirm} disabled={isProcessing} style={{backgroundColor: confirmButtonColor || '#dc3545' }} className="px-4 py-2 text-white rounded-md font-medium transition-colors">
+                    {isProcessing ? (processingText || 'Processing...') : (confirmText || 'Confirm')}
+                </button>
             </div>
         </div>
-    );
-};
+    </div>
+);
 
 // Main Dashboard Component
 function ADashboard({ onLogout }) {
@@ -276,6 +296,8 @@ function ADashboard({ onLogout }) {
   const [isGeneratingReport, setIsGeneratingReport] = useState(false);
   const [studentFilter, setStudentFilter] = useState(null);
   const highlightTimerRef = useRef(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const tabs = ['students','rooms','complaints','payments'];
 
   useEffect(() => {
     setCurrentPage(1);
@@ -312,6 +334,120 @@ function ADashboard({ onLogout }) {
   }, []);
 
   useEffect(() => {fetchData();}, [fetchData]);
+
+  useEffect(() => {
+    return () => {
+      if (highlightTimerRef.current) clearTimeout(highlightTimerRef.current);
+    };
+  }, []);
+
+  const getValueByKey = (row, key) => {
+    if (!key) return undefined;
+    if (key.includes('.')) {
+      const parts = key.split('.');
+      let val = row;
+      for (const p of parts) {
+        if (val === null || val === undefined) return undefined;
+        val = val[p];
+      }
+      return val;
+    }
+    return row[key];
+  };
+
+  const buildColumnsConfig = (tableData, tab) => {
+  // If no data, return sensible defaults per tab
+  if (!tableData || tableData.length === 0) {
+    if (tab === 'complaints') {
+      return [
+        { key: 'id', label: 'ID' },
+        { key: 'students.name', label: 'Student Name' },
+        { key: 'students.room_no', label: 'Room No' },
+        { key: 'category', label: 'Category' },
+        { key: 'description', label: 'Description' },
+        { key: 'status', label: 'Status' },
+        { key: 'created_at', label: 'Created At' },
+      ];
+    }
+
+    if (tab === 'students') {
+      return [
+        { key: 'id', label: 'ID', width: '80px' },
+        { key: 'name', label: 'Name', width: '220px' },
+        { key: 'USN', label: 'USN', width: '140px' },
+        { key: 'email', label: 'Email', width: '220px' },
+        { key: 'room_no', label: 'Room ID', width: '160px' },
+        { key: 'fee_id', label: 'Fee ID', width: '140px' },
+        { key: 'actions', label: 'ACTIONS', width: '160px' },
+      ];
+    }
+
+    return [{ key: 'id', label: 'ID' }, { key: 'actions', label: 'ACTIONS' }];
+  }
+
+  // Use keys from first row to keep stable order
+  let keys = Object.keys(tableData[0]);
+
+  // Remove unwanted columns globally (case-insensitive)
+  const forbidden = ['arrived?', 'students', 'arrival_timestamp', 'avatar_url', 'avatar', 'password', 'complaint_id'];
+  keys = keys.filter(k => !forbidden.includes(String(k).toLowerCase()));
+
+  // Special layout for students: force desired columns & widths (remove complaint_id)
+  if (tab === 'students') {
+    // pick values if they exist in object, otherwise fallback to defaults
+    const cols = [
+      { key: 'id', label: 'ID', width: '80px' },
+      { key: 'name', label: 'Name', width: '220px' },
+      { key: 'USN', label: 'USN', width: '140px' },
+      { key: 'email', label: 'Email', width: '220px' },
+      { key: 'room_no', label: 'Room ID', width: '160px' }, // resized / filled column
+      { key: 'fee_id', label: 'Fee ID', width: '140px' },   // resized / filled column
+      { key: 'actions', label: 'ACTIONS', width: '160px' }
+    ];
+    return cols;
+  }
+
+  // Complaints: explicit ordering
+  if (tab === 'complaints') {
+    return [
+      { key: 'id', label: 'ID' },
+      { key: 'students.name', label: 'Student Name' },
+      { key: 'students.room_no', label: 'Room No' },
+      { key: 'category', label: 'Category' },
+      { key: 'description', label: 'Description' },
+      { key: 'status', label: 'Status' },
+      { key: 'created_at', label: 'Created At' },
+    ];
+  }
+
+  // Generic conversion for other tabs
+  const cols = keys.map(k => ({ key: k, label: String(k).replace(/_/g, ' ').toUpperCase() }));
+
+  // Ensure actions column exists for rooms/payments if needed
+  if ((tab === 'rooms' || tab === 'students') && !cols.some(c => c.key === 'actions')) {
+    cols.push({ key: 'actions', label: 'ACTIONS' });
+  }
+
+  return cols;
+};
+
+const handleForeignKeyClick = (targetTab, id) => {
+    if (id === null || id === undefined) return;
+    if (highlightTimerRef.current) clearTimeout(highlightTimerRef.current);
+
+    // Switch to target tab first, then set highlight and bring to page 1
+    setActiveTab(targetTab);
+    setCurrentPage(1);
+    setHighlightedRow({ tab: targetTab, id });
+
+    // scroll top so user sees the table
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Set timer to remove highlight after 5s
+    highlightTimerRef.current = setTimeout(() => {
+      setHighlightedRow({ tab: null, id: null });
+    }, 5000);
+  };
 
   const handleGenerateReport = async (student) => {
     if (!student) return;
@@ -441,25 +577,7 @@ function ADashboard({ onLogout }) {
     }
   };
 
-  const handleForeignKeyClick = (tab, id) => {
-    if (id === null || id === undefined) return;
-
-    // 1. Clear any existing fade-out timer. This is crucial if the user clicks another link quickly.
-    if (highlightTimerRef.current) {
-      clearTimeout(highlightTimerRef.current);
-    }
-
-    // 2. Set the highlight state and switch tabs as before.
-    setHighlightedRow({ tab, id });
-    setActiveTab(tab);
-    window.scrollTo(0, 0);
-
-    // 3. Set a new timer. After 5 seconds, it will reset the highlight state.
-    // This causes React to re-render and remove the animation class.
-    highlightTimerRef.current = setTimeout(() => {
-      setHighlightedRow({ tab: null, id: null });
-    }, 5000); // 5000 milliseconds = 5 seconds
-  };
+  
   
   useEffect(() => {
     return () => {
@@ -469,42 +587,9 @@ function ADashboard({ onLogout }) {
     };
   }, []);
 
-  const COLUMN_MAP = {
-    id: 'ID',
-    name: 'Name',
-    USN: 'USN',
-    email: 'Email',
-    room_no: 'Room No',
-    fee_id: 'Fee ID',
-    hostel_id: 'Hostel ID',
-    capacity: 'Capacity',
-    current_occupancy: 'Occupancy',
-    created_at: 'Date Created',
-    student_id: 'Student ID',
-    category: 'Category',
-    description: 'Description',
-    status: 'Status',
-    amount_paid: 'Amount Paid',
-    Actions: 'Actions', // For our custom actions column
-};
-
   const renderTable = () => {
     const tableData = data[activeTab] || [];
     let displayData = [...tableData];
-
-    const totalEntries = displayData.length;
-    const totalPages = Math.ceil(totalEntries / rowsPerPage);
-    const startIndex = (currentPage - 1) * rowsPerPage;
-    const endIndex = Math.min(startIndex + rowsPerPage, totalEntries);
-    const paginatedData = displayData.slice(startIndex, endIndex);
-    
-    // if (highlightedRow.tab === activeTab && highlightedRow.id !== null) {
-    //     const highlightedIndex = displayData.findIndex(item => Number(item.id) === Number(highlightedRow.id));
-    //     if (highlightedIndex > -1) {
-    //         const [item] = displayData.splice(highlightedIndex, 1);
-    //         displayData.unshift(item);
-    //     }
-    // }
 
     if (activeTab === 'complaints' && studentFilter) {
       displayData = displayData.filter(complaint => complaint.student_id === studentFilter.id);
@@ -519,155 +604,135 @@ function ADashboard({ onLogout }) {
               <button onClick={() => setStudentFilter(null)} style={styles.clearFilterButton}>Clear Filter</button>
             </div>
           )}
-          <p style={{color: 'white', textAlign: 'center'}}>No data available for this view.</p>
+          <p style={{ color: 'white', textAlign: 'center' }}>No data available for this view.</p>
         </div>
       );
     }
 
-    let columnOrder = [];
-    if (activeTab === 'students') {
-      columnOrder = ['name', 'USN', 'email', 'room_no', 'fee_id', 'created_at'];
-    } else if (activeTab === 'rooms') {
-      columnOrder = ['id', 'hostel_id', 'capacity', 'current_occupancy', 'created_at'];
-    } else if (activeTab === 'complaints') {
-      // We will now get the student name and room from the nested object
-      columnOrder = ['id', 'students.name', 'students.room_no', 'category', 'status', 'description', 'created_at'];
-    } else if (activeTab === 'payments') {
-      columnOrder = ['id', 'student_id', 'amount_paid', 'status', 'created_at'];
-    }
-
-    if (activeTab === 'students' || activeTab === 'rooms') {
-      columnOrder.push('Actions');
-    }
-
+    // If highlighted row belongs to this tab, bring to top so user sees it
     if (highlightedRow.tab === activeTab && highlightedRow.id !== null) {
-        const highlightedIndex = displayData.findIndex(item => Number(item.id) === Number(highlightedRow.id));
-        if (highlightedIndex > -1) { 
-            const [item] = displayData.splice(highlightedIndex, 1); 
-            displayData.unshift(item); 
-        }
+      const highlightedIndex = displayData.findIndex(item => Number(item.id) === Number(highlightedRow.id));
+      if (highlightedIndex > -1) {
+        const [item] = displayData.splice(highlightedIndex, 1);
+        displayData.unshift(item);
+      }
     }
 
+    const totalEntries = displayData.length;
+    const totalPages = Math.ceil(totalEntries / rowsPerPage);
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    const endIndex = Math.min(startIndex + rowsPerPage, totalEntries);
+    const paginatedData = displayData.slice(startIndex, endIndex);
 
-    // const paginatedData = displayData.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
-
-    let headers = tableData.length > 0 ? Object.keys(tableData[0]) : [];
-    headers = headers.filter(h => h !== 'arrived?' && h !== 'students' && h !== 'arrival_timestamp');
-    
-    if (activeTab === 'complaints' && headers.length > 0) {
-        headers = ['ID', 'Student Name', 'Room No', 'Category', 'Description', 'Status', 'Created At'];
-    } else {
-        if (activeTab === 'students') {
-            headers = headers.filter(header => header !== 'arrived?');
-        }
-        if ((activeTab === 'students' || activeTab === 'rooms') && !headers.includes('actions')) {
-            headers.push('actions');
-        }
-    }
-
+    const columnsConfig = buildColumnsConfig(tableData, activeTab);
 
     return (
       <>
         {activeTab === 'complaints' && studentFilter && (
-            <div style={styles.filterBar}>
-                <span>Showing complaints for: <strong>{studentFilter.name}</strong></span>
-                <button onClick={() => setStudentFilter(null)} style={styles.clearFilterButton}>Clear Filter</button>
-            </div>
+          <div style={styles.filterBar}>
+            <span>Showing complaints for: <strong>{studentFilter.name}</strong></span>
+            <button onClick={() => setStudentFilter(null)} style={styles.clearFilterButton}>Clear Filter</button>
+          </div>
         )}
+
         <div style={styles.tableContainer}>
           <table style={styles.table}>
-            <thead><tr>{headers.map(header => <th key={header} style={styles.th}>{header.replace(/_/g, ' ').toUpperCase()}</th>)}</tr></thead>
+            <thead>
+              <tr>
+                {columnsConfig.map(col => (
+                  <th key={col.key} style={{ ...styles.th, width: col.width || 'auto' }}>
+                  {col.label}</th>
+                ))}
+              </tr>
+            </thead>
             <tbody>
-              {paginatedData.map((row) => {
+              {paginatedData.map(row => {
                 const isHighlighted = highlightedRow.tab === activeTab && Number(row.id) === Number(highlightedRow.id);
                 return (
                   <tr key={row.id} className={isHighlighted ? 'highlight-fade' : ''}>
-                    {/* --- Smarter Cell Rendering Logic --- */}
-                    {activeTab === 'complaints' ? (
-                      <>
-                        <td style={{...styles.td, color: 'white'}}>{row.id}</td>
-                        <td style={{...styles.td, color: 'white'}}>{row.students?.name || 'N/A'}</td>
-                        <td style={{...styles.td, color: 'white'}}>{row.students?.room_no || 'N/A'}</td>
-                        <td style={{...styles.td, color: 'white'}}>{row.category}</td>
-                        <td style={{...styles.td, color: 'white'}}>{row.description}</td>
-                        <td style={{...styles.td, color: 'white'}}>{row.status}</td>
-                        <td style={{...styles.td, color: 'white'}}>{renderCellContent('created_at', row.created_at)}</td>
-                      </>
-                    ) : (
-                      // Original logic for all other tables
-                      headers.map(header => {
-                        if (header === 'actions') {
-                          return (
-                            <td key={`${row.id}-actions`} style={{...styles.td, display: 'flex', gap: '20px', padding:'25px'}}>
-                              <button
-                                  onClick={() => setItemToDelete({ type: activeTab.slice(0, -1), data: row })}
-                                  style={styles.deleteButton}
-                              >
-                                  Delete
-                              </button>
-                              {/* --- NEW "Download Report" BUTTON --- */}
-                              {activeTab === 'students' && (
-                                  <button
-                                      onClick={() => setStudentForReport(row)}
-                                      style={styles.reportButton}
-                                  >
-                                      Report
-                                  </button>
-                                  )}
-                              </td>
-                            );
-                          }
-                        const dataKey = header.replace(/ /g, '_').toLowerCase();
-                        const cellContent = renderCellContent(header, row[header]);
-                        const isLink = React.isValidElement(cellContent);
-                        const cellStyle = {...styles.td, color: isLink ? 'inherit' : 'white'};
-                        return (<td key={`${row.id}-${header}`} style={cellStyle}>{cellContent}</td>);
-                      })
-                    )}
+                    {columnsConfig.map(col => {
+                      if (col.key === 'actions') {
+                        return (
+                          <td key={`${row.id}-actions`} style={{ ...styles.td, paddingTop:'9px', width: col.width || '160px',padding:'5px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                            <button
+                              onClick={() => setItemToDelete({ type: activeTab.slice(0, -1), data: row })}
+                              style={styles.deleteButton}
+                            >
+                              Delete
+                            </button>
+                            {activeTab === 'students' && (
+                              <button onClick={() => setStudentForReport(row)} style={styles.reportButton}>Report</button>
+                            )}
+                          </td>
+                        );
+                      }
+
+                      const value = col.key.includes('.') ? col.key.split('.').reduce((acc, k) => acc && acc[k], row) : row[col.key];
+                      const cellContent = renderCellContent(col.key, value, row);
+                      return <td key={`${row.id}-${col.key}`} style={{ ...styles.td, width: col.width || 'auto', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: 'white' }}>{cellContent}</td>;
+                    })}
                   </tr>
                 );
               })}
             </tbody>
           </table>
         </div>
+
         <div style={styles.paginationContainer}>
-            <span>
-                Showing {startIndex + 1} to {endIndex} of {totalEntries} entries
-            </span>
-            <div>
-                <button
-                    onClick={() => setCurrentPage(prev => prev - 1)}
-                    disabled={currentPage === 1}
-                    style={currentPage === 1 ? styles.disabledButton : styles.paginationButton}
-                >
-                    &lt; Previous
-                </button>
-                <button
-                    onClick={() => setCurrentPage(prev => prev + 1)}
-                    disabled={currentPage >= totalPages}
-                    style={currentPage >= totalPages ? styles.disabledButton : styles.paginationButton}
-                >
-                    Next &gt;
-                </button>
-            </div>
+          <span>Showing {startIndex + 1} to {endIndex} of {totalEntries} entries</span>
+          <div>
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
+              style={currentPage === 1 ? styles.disabledButton : styles.paginationButton}
+            >
+              &lt; Previous
+            </button>
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              disabled={currentPage >= totalPages}
+              style={currentPage >= totalPages ? styles.disabledButton : styles.paginationButton}
+            >
+              Next &gt;
+            </button>
+          </div>
         </div>
-      </>  
+      </>
     );
   };
   
-  const renderCellContent = (headerKey, value, row) => {
-    const foreignKeyMap = {complaint_id: 'complaints', fee_id: 'payments', room_no: 'rooms',};
+  const renderCellContent = (headerKey, value, row = {}) => {
+    const foreignKeyMap = { complaint_id: 'complaints', fee_id: 'payments', room_no: 'rooms' };
 
-    if (headerKey === 'students') {
-        return row.students?.name || 'N/A';
+    // If the headerKey is nested like 'students.name' we just return the value
+    if (headerKey && headerKey.includes('.')) {
+      return value !== null && value !== undefined ? String(value) : 'N/A';
     }
 
-    if (activeTab === 'students' && foreignKeyMap[headerKey] && value !== null) {
+    // Links when in students tab for certain foreign keys
+    if (activeTab === 'students' && headerKey && foreignKeyMap[headerKey] && value !== null && value !== undefined) {
       const targetTab = foreignKeyMap[headerKey];
-      return (<a href="#" style={styles.link} onClick={(e) => { e.preventDefault(); handleForeignKeyClick(targetTab, value); }}>{value}</a>);
+      return (
+        <a
+          href="#"
+          style={styles.link}
+          onClick={(e) => { e.preventDefault(); handleForeignKeyClick(targetTab, value); }}
+        >
+          {String(value)}
+        </a>
+      );
     }
-    if (headerKey === 'created_at' && value) { return formatDateForDisplay(new Date(value)); }
-    return value !== null && value !== undefined ? String(value) : 'N/A';
+
+    if (headerKey === 'created_at' && value) {
+      try {
+        return formatDateForDisplay(new Date(value));
+      } catch {
+        return String(value);
+      }
+    }
+
+    if (value === null || value === undefined) return 'N/A';
+    return String(value);
   };
 
   if (loading) return <div>Loading dashboard...</div>;
@@ -678,7 +743,7 @@ function ADashboard({ onLogout }) {
   const pendingComplaints = data.complaints.filter(c => c.status !== 'Resolved').length;
 
   const StatsCard = ({ title, value, icon }) => (
-    <div className="bg-gray-900 rounded-xl p-6 flex items-center space-x-4">
+    <div className="bg-gray-900 rounded-xl p-6 flex items-center space-x-4 w-full">
       <div className="bg-gray-800 p-3 rounded-lg">{icon}</div>
       <div>
         <p className="text-sm text-gray-400 font-medium">{title}</p>
@@ -688,36 +753,34 @@ function ADashboard({ onLogout }) {
   );
 
   return (
-    // <div style={styles.dashboard}>
     <div className="flex h-screen bg-gray-800 font-sans">
 
-
+      {/* Confirmation / Modals */}
       {studentForReport && (
-          <ConfirmationModal
-              title="Confirm Report Download"
-              message={`Do you want to generate and download a full report for ${studentForReport.name}?`}
-              onConfirm={() => handleGenerateReport(studentForReport)}
-              onCancel={() => setStudentForReport(null)}
-              isProcessing={isGeneratingReport}
-              confirmText="Download"
-              processingText="Generating..."
-              confirmButtonColor="#007bff" // Blue color for a non-destructive action
-          />
+        <ConfirmationModal
+          title="Confirm Report Download"
+          message={`Do you want to generate and download a full report for ${studentForReport.name}?`}
+          onConfirm={() => handleGenerateReport(studentForReport)}
+          onCancel={() => setStudentForReport(null)}
+          isProcessing={isGeneratingReport}
+          confirmText="Download"
+          processingText="Generating..."
+          confirmButtonColor="#007bff"
+        />
       )}
 
       {itemToDelete && (
-          <ConfirmationModal
-              title="Confirm Deletion"
-              message={`Are you sure you want to permanently delete this ${itemToDelete.type}? This action cannot be undone.`}
-              onConfirm={handleConfirmDelete}
-              onCancel={() => setItemToDelete(null)}
-              isProcessing={isDeleting}
-              confirmText="Delete"
-              processingText="Deleting..."
-          />
+        <ConfirmationModal
+          title="Confirm Deletion"
+          message={`Are you sure you want to permanently delete this ${itemToDelete.type}? This action cannot be undone.`}
+          onConfirm={handleConfirmDelete}
+          onCancel={() => setItemToDelete(null)}
+          isProcessing={isDeleting}
+          confirmText="Delete"
+          processingText="Deleting..."
+        />
       )}
-      
-      {/* --- RENDER THE MODALS --- */}
+
       {showAddRoomsModal && <AddRoomsModal onClose={() => setShowAddRoomsModal(false)} onAddSuccess={fetchData} />}
 
       {showLogoutConfirm && (
@@ -726,158 +789,195 @@ function ADashboard({ onLogout }) {
           message="Are you sure you want to log out?"
           onConfirm={onLogout}
           onCancel={() => setShowLogoutConfirm(false)}
-          isProcessing={false} // Logout is instant, no processing state needed
+          isProcessing={false}
           confirmText="Logout"
         />
       )}
 
-      <nav className="w-64 bg-gray-900 text-white flex flex-col">
-        <div className="p-6 flex items-center gap-4 border-b border-gray-700">
-            {/* You can add your SJBIT logo here later if you wish */}
-            <h1 className="text-xl font-bold">Admin Dashboard</h1>
+      {/* NAV */}
+      <nav className={`${sidebarCollapsed ? 'w-20' : 'w-64'} bg-gray-900 text-white flex flex-col transition-all duration-150`}>
+        <div className="p-4 flex items-center justify-between border-b border-gray-700">
+          <div className="flex items-center gap-3">
+            {/* <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7M3 7l9-4 9 4"/></svg> */}
+            <span style={{ display: sidebarCollapsed ? 'none' : 'inline' }} className="text-lg font-bold">Admin Dashboard</span>
+          </div>
+          <button onClick={() => setSidebarCollapsed(s => !s)} className="p-1 rounded hover:bg-gray-800">
+            {/* toggle icon */}
+            <svg xmlns="http://www.w3.org/2000/svg"
+              className={`h-5 w-5 transform transition-transform duration-50 ${sidebarCollapsed ? '-translate-x-5' : 'translate-x-0'}`}
+              fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" />
+            </svg>
+
+          </button>
         </div>
-        <div className="flex-1 p-4 space-y-2">
-            {['students', 'rooms', 'complaints', 'payments'].map(tab => (
-                <button key={tab} onClick={() => setActiveTab(tab)} className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg text-left text-sm font-medium transition-colors ${activeTab === tab ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700 hover:text-white'}`}>
-                    {/* SVG Icons */}
-                    {tab === 'students' && <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>}
-                    {tab === 'rooms' && <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 21h20"/><path d="M5 21V7l7-4 7 4v14"/><path d="M15 7v4h-4V7h4z"/></svg>}
-                    {tab === 'complaints' && <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>}
-                    {tab === 'payments' && <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>}
-                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                </button>
-            ))}
-        </div>
-        <div className="p-4 border-t border-gray-700">
-            <button onClick={() => setShowLogoutConfirm(true)} className="w-full flex items-center gap-3 px-4 py-2 rounded-lg text-left text-sm font-medium text-gray-400 hover:bg-red-600/20 hover:text-red-400 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
-                Logout
-            </button>
+
+        <div className="flex-1 p-2">
+  <div className="relative" style={{ ['--active-index']: tabs.indexOf(activeTab) }}>
+    {/* Sliding blue indicator behind the buttons */}
+
+    {/* Buttons on top of the indicator */}
+    <div className="flex-1 p-2">
+  <div
+    className="relative"
+    style={{
+      // constants used in the calc below (keep in sync with button classes: h-12 + gap-2)
+      // BTN_HEIGHT = 3rem (h-12), BTN_GAP = 0.5rem (gap-2)
+      ['--btn-height']: '3rem',
+      ['--btn-gap']: '0.5rem',
+    }}
+  >
+    {/* Sliding blue indicator (behind buttons). 
+        When collapsed: centered & fully rounded (width = 3rem).
+        When expanded: stretches horizontally with rounded-lg. */}
+    <div
+      aria-hidden="true"
+      className="absolute bg-blue-600 pointer-events-none transition-all duration-150 ease-in-out"
+      style={{
+        height: '3rem',                                      // BTN_HEIGHT
+        borderRadius: sidebarCollapsed ? '9999px' : '0.5rem',
+        // expanded: leave small left/right padding; collapsed: center the indicator
+        left: sidebarCollapsed ? '50%' : '0.5rem',
+        right: sidebarCollapsed ? 'auto' : '0.5rem',
+        width: sidebarCollapsed ? '3rem' : 'calc(100% - 1rem)',
+        // translateY must account for both button height and the gap between buttons
+        transform: sidebarCollapsed
+          ? `translate(-50%, calc(${tabs.indexOf(activeTab)} * (var(--btn-height) + var(--btn-gap))))`
+          : `translateY(calc(${tabs.indexOf(activeTab)} * (var(--btn-height) + var(--btn-gap))))`,
+      }}
+    />
+
+    {/* Buttons on top of the indicator */}
+    <div className="relative z-10 flex flex-col gap-2">
+      {tabs.map((tab) => (
+        <button
+          key={tab}
+          onClick={() => { setActiveTab(tab); setHighlightedRow({ tab: null, id: null }); }}
+          className={`h-12 flex items-center gap-3 px-3 text-sm font-medium relative transition-colors
+            ${sidebarCollapsed ? 'justify-center' : ''} ${activeTab === tab ? 'text-white' : 'text-gray-400 hover:text-white'}`}
+        >
+          {/* icons (your SVGs) */}
+          {tab === 'students' && <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>}
+          {tab === 'rooms' && <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 21h20"/><path d="M5 21V7l7-4 7 4v14"/><path d="M15 7v4h-4V7h4z"/></svg>}
+          {tab === 'complaints' && <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>}
+          {tab === 'payments' && <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>}
+
+          {/* label — hidden when sidebar is collapsed */}
+          <span style={{ display: sidebarCollapsed ? 'none' : 'inline' }} className="ml-2">
+            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+          </span>
+        </button>
+      ))}
+    </div>
+  </div>
+</div>
+  </div>
+</div>
+
+
+        <div className="p-3 border-t border-gray-700">
+          <button onClick={() => setShowLogoutConfirm(true)} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left text-sm font-medium text-gray-400 hover:bg-red-600/10 hover:text-red-400 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+            <span style={{ display: sidebarCollapsed ? 'none' : 'inline' }}>Logout</span>
+          </button>
         </div>
       </nav>
 
+      {/* styles for highlight fade animation — uses an explicit final color */}
       <style>{`
         @keyframes fadeHighlight {
-          from { background-color: #ff4d4d; } /* Start bright red */
-          to { background-color: ${styles.td.backgroundColor}; } /* Fade to the normal cell color */
+          from { background-color: #ff4d4d; } /* bright red start */
+          to { background-color: #111827; } /* match table cell BG */
         }
         .highlight-fade > td {
           animation: fadeHighlight 5s ease-out forwards;
         }
       `}</style>
 
-        <main className="flex-1 overflow-y-auto p-8">
-        <h1 className="text-3xl font-bold text-white mb-8">{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Overview</h1>
+      {/* Main content */}
+      <main className="flex-1 overflow-y-auto p-8">
+        <h1 className="text-3xl font-bold text-white mb-6">{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Overview</h1>
 
-        {/* --- STATS CARDS --- */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <StatsCard title="Total Students" value={totalStudents} icon={<svg className="h-6 w-6 text-blue-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>} />
-            <StatsCard title="Rooms Occupied" value={`${occupiedRooms} / ${totalRooms}`} icon={<svg className="h-6 w-6 text-green-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 21h20"/><path d="M5 21V7l7-4 7 4v14"/></svg>} />
-            <StatsCard title="Pending Complaints" value={pendingComplaints} icon={<svg className="h-6 w-6 text-yellow-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/></svg>} />
-            <StatsCard title="Total Payments" value={data.payments.length} icon={<svg className="h-6 w-6 text-pink-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>} />
+        {/* Stats: single row, horizontally scrollable on small screens */}
+        <div className="mb-8">
+           <div className="flex gap-6 overflow-x-auto lg:grid lg:grid-cols-4 lg:gap-6">
+            <StatsCard
+              title="Total Students"
+              value={totalStudents}
+              icon={<svg className="h-6 w-6 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>}
+            />
+            <StatsCard
+              title="Rooms Occupied"
+              value={`${occupiedRooms} / ${totalRooms}`}
+              icon={<svg className="h-6 w-6 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M2 21h20"/><path d="M5 21V7l7-4 7 4v14"/></svg>}
+            />
+            <StatsCard
+              title="Pending Complaints"
+              value={pendingComplaints}
+              icon={<svg className="h-6 w-6 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/></svg>}
+            />
+            <StatsCard
+              title="Total Payments"
+              value={data.payments.length}
+              icon={<svg className="h-6 w-6 text-pink-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>}
+            />
+          </div>
         </div>
 
-        {/* --- MAIN TABLE SECTION --- */}
+        {/* Table container */}
         <div className="bg-gray-900 shadow-lg rounded-xl">
-             <div className="p-6 flex justify-between items-center">
-                <div>
-                    <label htmlFor="rowsPerPage" className="text-gray-400 mr-2">View</label>
-                    <select id="rowsPerPage" value={rowsPerPage} onChange={e => setRowsPerPage(Number(e.target.value))} className="bg-gray-700 text-white rounded-md border-gray-600 focus:ring-blue-500 focus:border-blue-500">
-                        <option value={25}>25</option><option value={50}>50</option><option value={75}>75</option><option value={100}>100</option>
-                    </select>
-                </div>
-                 {activeTab === 'rooms' && (<button onClick={() => setShowAddRoomsModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-sm">+ Add Rooms</button>)}
+          <div className="p-6 flex justify-between items-center">
+            <div>
+              <label htmlFor="rowsPerPage" className="text-gray-400 mr-2">View</label>
+              <select id="rowsPerPage" value={rowsPerPage} onChange={e => setRowsPerPage(Number(e.target.value))} className="bg-gray-700 text-white rounded-md border-gray-600 focus:ring-blue-500 focus:border-blue-500">
+                <option value={25}>25</option><option value={50}>50</option><option value={75}>75</option><option value={100}>100</option>
+              </select>
+              <label className="text-gray-400 mr-2">  Rows</label>
             </div>
-            {activeTab === 'rooms' && <div className="px-6 pb-4"><CsvUploader onUploadSuccess={fetchData} /></div>}
-            {renderTable()}
+            {activeTab === 'rooms' && (<button onClick={() => setShowAddRoomsModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-sm">+ Add Rooms</button>)}
+          </div>
+
+          {activeTab === 'rooms' && <div className="px-6 pb-4">{<CsvUploader onUploadSuccess={fetchData} />}</div>}
+
+          {renderTable()}
         </div>
       </main>
-      
-      {/* <nav style={styles.nav}> */}
-          {/* {['students', 'rooms', 'complaints', 'payments'].map(tab => (
-            // --- FIX #1: The onClick handler now resets the highlight state ---
-            <button
-              key={tab}
-              style={activeTab === tab ? styles.activeTabButton : styles.tabButton}
-              onClick={() => {
-                setActiveTab(tab);
-                // This line prevents the "ghost row" bug
-                setHighlightedRow({ tab: null, id: null }); 
-              }}
-            >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
-            </button>
-          ))} */}
-      {/* </nav> */}
-      {/* <main style={styles.main}>
-          <div style={styles.controls}>
-              <div><label htmlFor="rowsPerPage">View </label><select id="rowsPerPage" value={rowsPerPage} onChange={e => setRowsPerPage(Number(e.target.value))}><option value={25}>25</option><option value={50}>50</option><option value={75}>75</option><option value={100}>100</option></select><span> entries</span></div>
-              {activeTab === 'rooms' && (<button onClick={() => setShowAddRoomsModal(true)} style={{ marginLeft: '20px' }}>+ Add Rooms Manually</button>)}
-          </div>
-          {activeTab === 'rooms' && <CsvUploader onUploadSuccess={fetchData} />}
-          {renderTable()}
-      </main> */}
     </div>
   );
 }
 
 // STYLES OBJECT
 const styles = {
-    paginationContainer: {display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 10px', marginTop: '10px', color: 'white'},
-    paginationButton: {padding: '8px 16px', margin: '0 5px', backgroundColor: '#6c757d', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer',},
-    disabledButton: {padding: '8px 16px', margin: '0 5px', backgroundColor: '#343a40', color: '#6c757d', border: 'none', borderRadius: '5px', cursor: 'not-allowed',},
-    dashboard: { fontFamily: 'Arial, sans-serif', color: '#333' },
-    header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 20px', backgroundColor: '#000000ff', borderBottom: '1px solid #ddd', color:"#ddd" },
-    nav: { display: 'flex', backgroundColor: '#000000ff', padding: '0 20px' },
-    tabButton: { padding: '15px 20px', border: 'none', background: 'transparent', cursor: 'pointer', fontSize: '16px' },
-    activeTabButton: { padding: '15px 20px', border: 'none', background: '#000000ff', cursor: 'pointer', fontSize: '16px', borderBottom: '3px solid #007bff' },
-    main: { padding: '20px' },
-    controls: { marginBottom: '20px', display: 'flex', alignItems: 'center' , color: "#ddd"},
-    csvUploader: { border: '1px solid #ddd', padding: '20px', marginBottom: '20px', borderRadius: '5px', color:"#ddd"},
-    tableContainer: { overflowX: 'auto' },
-    table: { width: '100%', borderCollapse: 'collapse' },
-    th: { backgroundColor: '#f2f2f2', padding: '12px', border: '1px solid #ddd', textAlign: 'left' },
-    tr: { '&:hover': { backgroundColor: '#f5f5f5' } },
-    td: { padding: '12px', border: '1px solid #ffffffff' },
-    link: { color: '#007bff', textDecoration: 'underline', cursor: 'pointer' },
-    deleteButton: { backgroundColor: '#dc3545', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer' },
-    confirmButton: { backgroundColor: '#dc3545', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '5px', cursor: 'pointer' },
-    cancelButton: { backgroundColor: '#6c757d', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '5px', cursor: 'pointer' },
-    // Styles for the new modal
-    modalBackdrop: { position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 },
-    modalContent: { background: 'white', padding: '25px', borderRadius: '8px', width: '90%', maxWidth: '500px', maxHeight: '90vh', overflowY: 'auto' },
-    formGroup: { marginBottom: '15px' },
-    roomFormWrapper: { border: '1px solid #eee', padding: '10px', borderRadius: '5px', marginBottom: '10px' },
-    roomForm: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '10px', border: '1px solid #eee', padding: '10px', borderRadius: '5px', marginBottom: '10px' , color:"#ddd"},
-    modalActions: { display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '20px' },
-    errorMessage: { color: 'red', fontSize: '12px', margin: '5px 0 0', textAlign: 'center' },
-    reportButton: { 
-        backgroundColor: '#17a2b8', // A teal/info color
-        color: 'white', 
-        border: 'none', 
-        padding: '5px 10px', 
-        borderRadius: '4px', 
-        cursor: 'pointer' 
-    },
-    filterBar: {
-        backgroundColor: '#333',
-        color: 'white',
-        padding: '10px 15px',
-        marginBottom: '15px',
-        borderRadius: '5px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    clearFilterButton: {
-        backgroundColor: '#6c757d',
-        color: 'white',
-        border: 'none',
-        padding: '5px 10px',
-        borderRadius: '4px',
-        cursor: 'pointer'
-    },
-  };
+  paginationContainer: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 10px', marginTop: '10px', color: 'white' },
+  paginationButton: { padding: '8px 16px', margin: '0 5px', backgroundColor: '#6c757d', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', },
+  disabledButton: { padding: '8px 16px', margin: '0 5px', backgroundColor: '#343a40', color: '#6c757d', border: 'none', borderRadius: '5px', cursor: 'not-allowed', },
+  tableContainer: { overflowX: 'auto' },
+  table: { width: '100%', borderCollapse: 'collapse' },
+  th: { backgroundColor: '#111835', padding: '12px', border: '2px solid #1f2945', textAlign: 'left', color: '#9ca3af' },
+  td: { padding: '12px', border: '1.5px solid #111827', backgroundColor: '#111827' },
+  link: { color: '#3b82f6', textDecoration: 'underline', cursor: 'pointer' },
+  csvUploader: { border: '1px solid #ddd', padding: '20px', marginBottom: '20px', borderRadius: '5px', color:"#ddd"},
+  deleteButton: { backgroundColor: '#dc3545', color: 'white', border: 'none', padding: '4px 10px', borderRadius: '4px', cursor: 'pointer' },
+  reportButton: { backgroundColor: '#17a2b8', color: 'white', border: 'none', padding: '4px 10px', borderRadius: '4px', cursor: 'pointer' },
+  filterBar: {
+    backgroundColor: '#333',
+    color: 'white',
+    padding: '10px 15px',
+    marginBottom: '15px',
+    borderRadius: '5px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  clearFilterButton: {
+    backgroundColor: '#6c757d',
+    color: 'white',
+    border: 'none',
+    padding: '5px 10px',
+    borderRadius: '4px',
+    cursor: 'pointer'
+  },
+};
 
 export default ADashboard;
 

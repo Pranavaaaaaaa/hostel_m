@@ -18,9 +18,9 @@ export default function SignUpPage({ onBackToLogin, onProceedToPayment }) {
   // Helper to determine the slider's position based on the selected capacity
   const sliderPositionClass = () => {
     if (roomCapacity === 1) return 'translate-x-0';
-    if (roomCapacity === 2) return 'translate-x-full'; // translate-x-full is 100%
-    if (roomCapacity === 3) return 'translate-x-[200%]'; // translate-x-[200%] is 200%
-    return 'translate-x-full'; // Default case
+    if (roomCapacity === 2) return 'translate-x-[50%]'; 
+    if (roomCapacity === 3) return 'translate-x-[100%]';
+    return 'translate-x-[50%]'; // Default case
   };
 
   return (
