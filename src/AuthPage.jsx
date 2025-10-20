@@ -216,7 +216,7 @@ return (
 
               {/* --- SIGN UP FORM --- */}
               <div className={`absolute inset-0 p-8 flex flex-col justify-center transition-all duration-200 ease-in-out ${view === 'signup' ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}>
-                 <div className="flex justify-center items-center gap-6 mb-4">
+                 <div className="flex justify-center items-center gap-6 mb-2">
                     <img src="https://sjbit.edu.in/wp-content/uploads/2021/06/sjbit-new-logo.png" alt="SJBIT Logo" className="h-16 w-16"/>
                     <div>
                         <h2 className="text-3xl font-bold text-white tracking-tight">Create Account</h2>
@@ -253,7 +253,7 @@ return (
                             <label key={cap} className="relative z-10 flex-1 text-center cursor-pointer p-2 rounded-md">
                                 <input type="radio" name="capacity" value={cap} checked={roomCapacity === cap} onChange={() => setRoomCapacity(cap)} className="sr-only"/>
                                 <span className={`text-sm font-semibold transition-colors duration-100 ${roomCapacity === cap ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
-                                    {cap}-Seater
+                                    {cap} occupancy
                                 </span>
                             </label>
                             ))}
