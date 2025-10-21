@@ -9,26 +9,25 @@ import ADashboard from "./Admin_dashboard";
 import PaymentPage from "./PaymentPage";
 import ReceiptPage from "./ReceiptPage";
 
-const useMediaQuery = (query) => {
-  // Get the initial value on the first render
-  const [matches, setMatches] = useState(window.matchMedia(query).matches);
+function useIsDesktop() {
+  const [isDesktop, setIsDesktop] = useState(false);
 
   useEffect(() => {
-    const mediaQueryList = window.matchMedia(query);
-    
-    // This is the handler that will be called on every screen resize
-    const handleResize = () => setMatches(mediaQueryList.matches);
+    const updateStatus = () => {
+      const mq = window.matchMedia('(min-width: 1024px)');
+      const isMobileUA = /Mobi|Android/i.test(navigator.userAgent);
+      const inDesktopMode = !isMobileUA || mq.matches;
+      setIsDesktop(inDesktopMode);
+    };
 
-    // We listen to the 'resize' event on the window, which is much more reliable
-    // than the 'change' event in developer tools.
-    window.addEventListener('resize', handleResize);
+    updateStatus();
+    window.addEventListener('resize', updateStatus);
+    return () => window.removeEventListener('resize', updateStatus);
+  }, []);
 
-    // Clean up the listener when the component unmounts
-    return () => window.removeEventListener('resize', handleResize);
-  }, [query]); // Re-run effect if the query ever changes
+  return isDesktop;
+}
 
-  return matches;
-};
 const MobileBlocker = () => (
   <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white p-6 text-center font-sans">
     <svg className="w-20 h-20 text-blue-400 mb-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1">
@@ -152,7 +151,7 @@ const AppContent = () => {
 
 function App() {
   // We use 1024px as the breakpoint for "desktop" (Tailwind's 'lg' breakpoint)
-  const isDesktop = useMediaQuery('(min-width: 1024px)');
+  const isDesktop = useIsDesktop();
 
   // If it's a desktop, show the app. Otherwise, show the blocker message.
   return isDesktop ? <AppContent /> : <MobileBlocker />;
