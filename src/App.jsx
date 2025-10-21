@@ -1,6 +1,6 @@
 // App.jsx
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { supabase } from "./supabaseclient";
 import AuthPage from "./AuthPage";
 import Dashboard from "./Student_dashboard";
@@ -9,7 +9,36 @@ import ADashboard from "./Admin_dashboard";
 import PaymentPage from "./PaymentPage";
 import ReceiptPage from "./ReceiptPage";
 
-function App() {
+const useMediaQuery = (query) => {
+  const [matches, setMatches] = useState(window.matchMedia(query).matches);
+
+  useEffect(() => {
+    const mediaQueryList = window.matchMedia(query);
+    const listener = (event) => setMatches(event.matches);
+
+    // Add the listener
+    mediaQueryList.addEventListener('change', listener);
+
+    // Clean up the listener on component unmount
+    return () => mediaQueryList.removeEventListener('change', listener);
+  }, [query]);
+
+  return matches;
+};
+
+const MobileBlocker = () => (
+  <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white p-6 text-center font-sans">
+    <svg className="w-20 h-20 text-blue-400 mb-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+    </svg>
+    <h1 className="text-2xl font-bold">Desktop Experience Required</h1>
+    <p className="mt-2 text-gray-400 max-w-sm">
+      The Hostel Hub dashboard is designed for larger screens. Please switch to a desktop or laptop to access the application.
+    </p>
+  </div>
+);
+
+const AppContent = () => {
   // This state will now track the role of the logged-in user
   const [userRole, setUserRole] = useState(null);
   const [blockId, setBlockId] = useState(null); // To store warden's block ID
@@ -114,6 +143,16 @@ function App() {
   }
   
   // If no one is logged in, show the AuthPage
-  return <AuthPage onLogin={handleLogin} onProceedToPayment={handleProceedToPayment} />;}
+  return <AuthPage onLogin={handleLogin} onProceedToPayment={handleProceedToPayment} />;
+
+};
+
+function App() {
+  // We use 1024px as the breakpoint for "desktop" (Tailwind's 'lg' breakpoint)
+  const isDesktop = useMediaQuery('(min-width: 1024px)');
+
+  // If it's a desktop, show the app. Otherwise, show the blocker message.
+  return isDesktop ? <AppContent /> : <MobileBlocker />;
+}
 
 export default App;
