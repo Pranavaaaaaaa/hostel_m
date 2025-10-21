@@ -247,10 +247,10 @@ return (
 
                    <fieldset className="pt-2">
                         <legend className="block text-sm font-medium text-gray-300 mb-2">Select Room Capacity</legend>
-                        <div className="relative flex w-full bg-gray-800/50 p-1 rounded-lg">
+                        <div className="relative flex justify-between w-full bg-gray-800/50 p-1 rounded-lg">
                             <div className={`absolute top-1 left-1 h-[calc(100%-0.5rem)] w-[calc((100%-0.5rem)/3)] bg-blue-600 rounded-md transition-transform duration-170 ease-in-out ${sliderPositionClass()}`}/>
                             {[1, 2, 3].map(cap => (
-                            <label key={cap} className="relative z-10 flex-1 text-center cursor-pointer p-2 rounded-md">
+                            <label key={cap} className="relative z-10 flex-none w-1/3 text-center cursor-pointer p-2 rounded-md">
                                 <input type="radio" name="capacity" value={cap} checked={roomCapacity === cap} onChange={() => setRoomCapacity(cap)} className="sr-only"/>
                                 <span className={`text-sm font-semibold transition-colors duration-100 ${roomCapacity === cap ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                     {cap} occupancy
