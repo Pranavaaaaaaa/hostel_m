@@ -14,13 +14,13 @@ const useMediaQuery = (query) => {
 
   useEffect(() => {
     const mediaQueryList = window.matchMedia(query);
-    const listener = (event) => setMatches(event.matches);
+     const handleResize = () => setMatches(mediaQueryList.matches);
 
     // Add the listener
-    mediaQueryList.addEventListener('change', listener);
+    window.addEventListener('resize', handleResize);
 
     // Clean up the listener on component unmount
-    return () => mediaQueryList.removeEventListener('change', listener);
+    return () => window.removeEventListener('resize', handleResize);
   }, [query]);
 
   return matches;
@@ -33,7 +33,7 @@ const MobileBlocker = () => (
     </svg>
     <h1 className="text-2xl font-bold">Desktop Experience Required</h1>
     <p className="mt-2 text-gray-400 max-w-sm">
-      The Hostel Hub dashboard is designed for larger screens. Please switch to a desktop or laptop to access the application.
+      The Hostel Hub dashboard is designed for larger screens. Please turn on Desktop view on your browser or switch to a desktop or laptop to access the application.
     </p>
   </div>
 );
