@@ -10,22 +10,25 @@ import PaymentPage from "./PaymentPage";
 import ReceiptPage from "./ReceiptPage";
 
 const useMediaQuery = (query) => {
+  // Get the initial value on the first render
   const [matches, setMatches] = useState(window.matchMedia(query).matches);
 
   useEffect(() => {
     const mediaQueryList = window.matchMedia(query);
-     const handleResize = () => setMatches(mediaQueryList.matches);
+    
+    // This is the handler that will be called on every screen resize
+    const handleResize = () => setMatches(mediaQueryList.matches);
 
-    // Add the listener
+    // We listen to the 'resize' event on the window, which is much more reliable
+    // than the 'change' event in developer tools.
     window.addEventListener('resize', handleResize);
 
-    // Clean up the listener on component unmount
+    // Clean up the listener when the component unmounts
     return () => window.removeEventListener('resize', handleResize);
-  }, [query]);
+  }, [query]); // Re-run effect if the query ever changes
 
   return matches;
 };
-
 const MobileBlocker = () => (
   <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white p-6 text-center font-sans">
     <svg className="w-20 h-20 text-blue-400 mb-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1">
