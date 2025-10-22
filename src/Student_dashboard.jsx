@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from './supabaseclient';
+import LoadingScreen from './LoadingScreen';
+
 
 const ConfirmationModal = ({ title, message, onConfirm, onCancel, confirmText }) => (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50 p-4">
@@ -261,7 +263,7 @@ export default function Dashboard({ user, onLogout }) {
     </main>
   );
 
-if (loading) { return <p className="text-center py-10 text-gray-400">Loading...</p>; }
+if (loading) {return <LoadingScreen message="Loading Your Dashboard..." />;}
 
   // const FullDashboardView = () => (
   //   <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">

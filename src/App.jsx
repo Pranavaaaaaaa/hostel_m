@@ -33,9 +33,9 @@ const MobileBlocker = () => (
     <svg className="w-20 h-20 text-blue-400 mb-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1">
       <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
     </svg>
-    <h1 className="text-2xl font-bold">Desktop Experience Required</h1>
+    <h1 className="text-2xl font-bold">Turn On Desktop View</h1>
     <p className="mt-2 text-gray-400 max-w-sm">
-      The Hostel Hub dashboard is designed for larger screens. Please turn on Desktop view on your browser or switch to a desktop or laptop to access the application.
+      OR switch to a desktop or laptop to access the application.
     </p>
   </div>
 );

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from './supabaseclient';
+import LoadingScreen from './LoadingScreen';
 
 // Helper function to format dates as dd-mm-yyyy hh:mm
 const formatDateForDisplay = (date = new Date()) => {
@@ -735,7 +736,7 @@ const handleForeignKeyClick = (targetTab, id) => {
     return String(value);
   };
 
-  if (loading) return <div>Loading dashboard...</div>;
+  if (loading) {return <LoadingScreen message="Loading Admin Dashboard..." />;}
 
   const totalStudents = data.students.length;
   const totalRooms = data.rooms.length;
